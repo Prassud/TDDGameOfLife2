@@ -14,6 +14,7 @@ public class Grid {
     private List<Cell> nextGenerationDeadCells;
 
     private List<Cell> nextGenerationAliveCells;
+
     private Set<Cell> deadCells;
 
     public Grid(Collection<Cell> listOfCells) {
@@ -55,14 +56,14 @@ public class Grid {
         long aliveCellCount = 0;
         for (Cell eachNeighbourCell : neighbourCells) {
             if (!this.aliveCells.contains(eachNeighbourCell))
-                updateDeadNeighBourCellData(eachNeighbourCell);
+                updateDeadNeighbourCellData(eachNeighbourCell);
             else
                 aliveCellCount++;
         }
         neighbourAliveCellCountMap.put(eachCell, aliveCellCount);
     }
 
-    private void updateDeadNeighBourCellData(Cell eachNeighbourCell) {
+    private void updateDeadNeighbourCellData(Cell eachNeighbourCell) {
         this.deadCells.add(eachNeighbourCell);
         Long eachNeighbourCellAliveCount = neighbourAliveCellCountMap.get(eachNeighbourCell);
         eachNeighbourCellAliveCount = eachNeighbourCellAliveCount == null ? 1 : eachNeighbourCellAliveCount + 1;
