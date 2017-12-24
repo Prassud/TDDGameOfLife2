@@ -17,10 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-public class GameOfLifeTest {
+public class    GameOfLifeTest {
     @Test
     public void verifyIfGridCanBeCreatedWithGiveCellCoordinates() {
         Cell cell = new Cell(1, 2);

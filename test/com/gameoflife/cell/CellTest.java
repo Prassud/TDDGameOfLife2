@@ -26,7 +26,7 @@ public class CellTest {
         expectedNeighBourCells.add(new Cell(xCoordinate - 1, yCoordinate));
 
         List<Cell> neighbourCells = currCell.getNeighbourCells();
-        neighbourCells.forEach(eachNeighbourCell -> TestCase.assertTrue(expectedNeighBourCells.contains(eachNeighbourCell)));
+        neighbourCells.forEach(eachNeighbourCell -> assertTrue(expectedNeighBourCells.contains(eachNeighbourCell)));
 
     }
 }
