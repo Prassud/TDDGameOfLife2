@@ -4,50 +4,54 @@ import com.gameoflife.cell.Cell;
 import com.gameoflife.rules.UniverseRule;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class Grid {
 
     private Set<Cell> aliveCells;
 
-    private Map<Cell, Long> neighbourAliveCelCountMap;
+    private Map<Cell, Long> neighbourAliveCellCountMap;
 
-    private List<Cell> nextGenrationDeadCells;
+    private List<Cell> nextGenerationDeadCells;
 
-    private List<Cell> nextGenrationAliveCells;
+    private List<Cell> nextGenerationAliveCells;
     private Set<Cell> deadCells;
 
     public Grid(Collection<Cell> listOfCells) {
         this.aliveCells = new HashSet<>();
         this.deadCells = new HashSet<>();
         this.aliveCells.addAll(listOfCells);
-        this.neighbourAliveCelCountMap = new HashMap<>(10);
-        this.nextGenrationAliveCells = new ArrayList<>(10);
-        this.nextGenrationDeadCells = new ArrayList<>(10);
+        this.neighbourAliveCellCountMap = new HashMap<>(10);
+        this.nextGenerationAliveCells = new ArrayList<>(10);
+        this.nextGenerationDeadCells = new ArrayList<>(10);
     }
 
-    public Set<Cell> getAliveCellsAfterTheRuleIsApplied(UniverseRule universeRule) {
+    public Set<Cell> getAliveCellsAfterTheRuleIsApplied(List<UniverseRule> universeRules) {
 
-        aliveCells.forEach(
-                eachCell -> {
-                    updateEachCellAliveCountInMap(eachCell);
-                });
+        this.aliveCells.forEach(this::updateEachCellAliveCountInMap);
 
-        aliveCells.forEach(eachCell -> {
-            applyUniverseRuleOnAliveCells(eachCell, universeRule);
+        this.aliveCells.forEach(eachCell -> {
+            applyUniverseRuleOnAliveCells(eachCell, universeRules);
         });
 
-        deadCells.forEach(eachCell -> {
-            applyUniverseRuleOnDeadCells(eachCell, universeRule);
+        this.deadCells.forEach(eachCell -> {
+            applyUniverseRuleOnDeadCells(eachCell, universeRules);
         });
 
-        this.aliveCells.removeAll(this.nextGenrationDeadCells);
-        this.aliveCells.addAll(this.nextGenrationAliveCells);
+        this.aliveCells.removeAll(this.nextGenerationDeadCells);
+        this.aliveCells.addAll(this.nextGenerationAliveCells);
+        clearAll();
         return this.aliveCells;
     }
 
+    private void clearAll() {
+        this.neighbourAliveCellCountMap.clear();
+        this.deadCells.clear();
+        this.nextGenerationAliveCells.clear();
+        this.nextGenerationDeadCells.clear();
+    }
+
     private void updateEachCellAliveCountInMap(Cell eachCell) {
-        List<Cell> neighbourCells = eachCell.getNeighBourCells();
+        List<Cell> neighbourCells = eachCell.getNeighbourCells();
         long aliveCellCount = 0;
         for (Cell eachNeighbourCell : neighbourCells) {
             if (!this.aliveCells.contains(eachNeighbourCell))
@@ -55,28 +59,39 @@ public class Grid {
             else
                 aliveCellCount++;
         }
-        neighbourAliveCelCountMap.put(eachCell, aliveCellCount);
+        neighbourAliveCellCountMap.put(eachCell, aliveCellCount);
     }
 
     private void updateDeadNeighBourCellData(Cell eachNeighbourCell) {
         this.deadCells.add(eachNeighbourCell);
-        Long eachNeighbourCellAliveCount = neighbourAliveCelCountMap.get(eachNeighbourCell);
-        eachNeighbourCellAliveCount = eachNeighbourCellAliveCount == null ? 1 : eachNeighbourCellAliveCount+1;
-        this.neighbourAliveCelCountMap.put(eachNeighbourCell, eachNeighbourCellAliveCount);
+        Long eachNeighbourCellAliveCount = neighbourAliveCellCountMap.get(eachNeighbourCell);
+        eachNeighbourCellAliveCount = eachNeighbourCellAliveCount == null ? 1 : eachNeighbourCellAliveCount + 1;
+        this.neighbourAliveCellCountMap.put(eachNeighbourCell, eachNeighbourCellAliveCount);
     }
 
-    private void applyUniverseRuleOnDeadCells(Cell eachCell, UniverseRule universeRule) {
+    private void applyUniverseRuleOnDeadCells(Cell eachCell, List<UniverseRule> universeRules) {
 
-        Long neighbourAliveCellCount = neighbourAliveCelCountMap.get(eachCell);
-        if (!universeRule.isRuleForAliveCell() && universeRule.isCellAliveByThisRule(neighbourAliveCellCount)) {
-            this.nextGenrationAliveCells.add(eachCell);
-        }
+        Long neighbourAliveCellCount = neighbourAliveCellCountMap.get(eachCell);
+        universeRules.stream().filter(eachUniverseRule -> {
+            if (!eachUniverseRule.isRuleForAliveCell() && eachUniverseRule.isCellAliveByThisRule(neighbourAliveCellCount)) {
+                this.nextGenerationAliveCells.add(eachCell);
+                return true;
+            }
+            return false;
+        }).findFirst();
+
+
     }
 
-    private void applyUniverseRuleOnAliveCells(Cell eachCell, UniverseRule universeRule) {
-        Long neighbourAliveCellCount = neighbourAliveCelCountMap.get(eachCell);
-        if (universeRule.isRuleForAliveCell() && !universeRule.isCellAliveByThisRule(neighbourAliveCellCount)) {
-            this.nextGenrationDeadCells.add(eachCell);
-        }
+    private void applyUniverseRuleOnAliveCells(Cell eachCell, List<UniverseRule> universeRules) {
+        Long neighbourAliveCellCount = neighbourAliveCellCountMap.get(eachCell);
+        universeRules.stream().filter(eachUniverseRule -> {
+            if (eachUniverseRule.isRuleForAliveCell() && !eachUniverseRule.isCellAliveByThisRule(neighbourAliveCellCount)) {
+                this.nextGenerationDeadCells.add(eachCell);
+                return true;
+            }
+            return false;
+        }).findFirst();
+
     }
 }

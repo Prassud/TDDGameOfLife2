@@ -1,18 +1,24 @@
+package com.gameoflife.universe;
+
 import com.gameoflife.Universe;
 import com.gameoflife.cell.Cell;
 import com.gameoflife.grid.Grid;
 import com.gameoflife.rules.MakeDeadCellAliveOnNeighbourCellsAreLiveRule;
 import com.gameoflife.rules.MakeLiveCellDeadOnNeighboursFewerRule;
 import com.gameoflife.rules.MakeLiveCellDeadOnNeighboursOverCrowdedRule;
+import com.gameoflife.rules.UniverseRule;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class GameOfLifeTest {
     @Test
@@ -29,9 +35,10 @@ public class GameOfLifeTest {
         listOfCell.add(cell3);
         listOfCell.add(cell4);
         Grid gameOfLifeGrid = new Grid(listOfCell);
-        MakeLiveCellDeadOnNeighboursFewerRule firstRule = mock(MakeLiveCellDeadOnNeighboursFewerRule.class);
-        when(firstRule.isCellAliveByThisRule(anyLong())).thenReturn(true);
-        Set<Cell> currentGenerationAliveCells = gameOfLifeGrid.getAliveCellsAfterTheRuleIsApplied(firstRule);
+
+        List<UniverseRule> rules = new ArrayList<>();
+
+        Set<Cell> currentGenerationAliveCells = gameOfLifeGrid.getAliveCellsAfterTheRuleIsApplied(rules);
         currentGenerationAliveCells.forEach(eachCell -> Assert.assertTrue(listOfCell.contains(eachCell)));
 
     }
@@ -42,16 +49,19 @@ public class GameOfLifeTest {
         Cell cell = new Cell(1, 0);
         Cell cell1 = new Cell(1, 1);
         Cell cell2 = new Cell(1, 2);
-        String expectedGenerationResult = "1,1";
+        String expectedGenerationResult = "1,1" + '|';
         List<Cell> listOfCells = new ArrayList<Cell>(10);
         listOfCells.add(cell);
         listOfCells.add(cell1);
         listOfCells.add(cell2);
-        MakeLiveCellDeadOnNeighboursFewerRule firstRule = mock(MakeLiveCellDeadOnNeighboursFewerRule.class);
+        MakeLiveCellDeadOnNeighboursFewerRule firstRule = Mockito.mock(MakeLiveCellDeadOnNeighboursFewerRule.class);
+        Mockito.when(firstRule.isRuleForAliveCell()).thenReturn(true);
         Grid grid = new Grid(listOfCells);
-        Universe universe = new Universe(grid, firstRule);
+        ArrayList<UniverseRule> rules = new ArrayList<>();
+        rules.add(firstRule);
+        Universe universe = new Universe(grid, rules);
         String nextGenerationResult = universe.tick();
-        verify(firstRule, times(3)).isCellAliveByThisRule(anyLong());
+        Mockito.verify(firstRule, Mockito.times(3)).isCellAliveByThisRule(Matchers.anyLong());
 
 
         listOfCells = new ArrayList<Cell>(10);
@@ -60,13 +70,15 @@ public class GameOfLifeTest {
         listOfCells.add(cell2);
         grid = new Grid(listOfCells);
         firstRule = new MakeLiveCellDeadOnNeighboursFewerRule();
-        universe = new Universe(grid, firstRule);
+        rules = new ArrayList<>();
+        rules.add(firstRule);
+        universe = new Universe(grid, rules);
         nextGenerationResult = universe.tick();
         Assert.assertEquals(expectedGenerationResult, nextGenerationResult);
     }
 
     @Test
-    public void verifyIfFirstAndSecondRuleIsAppliedOnGameOfLife() {
+    public void verifyIfSecondRuleIsAppliedOnGameOfLife() {
         Cell cell = new Cell(1, 0);
         Cell cell1 = new Cell(1, 1);
         Cell cell2 = new Cell(1, 2);
@@ -79,11 +91,16 @@ public class GameOfLifeTest {
         listOfCells.add(cell2);
         listOfCells.add(cell3);
         listOfCells.add(cell4);
-        MakeLiveCellDeadOnNeighboursOverCrowdedRule secondRule = mock(MakeLiveCellDeadOnNeighboursOverCrowdedRule.class);
+        MakeLiveCellDeadOnNeighboursOverCrowdedRule secondRule = Mockito.mock(MakeLiveCellDeadOnNeighboursOverCrowdedRule.class);
+        Mockito.when(secondRule.isRuleForAliveCell()).thenReturn(true);
         Grid grid = new Grid(listOfCells);
-        Universe universe = new Universe(grid, secondRule);
+
+        List<UniverseRule> rules = new ArrayList<>();
+        rules.add(secondRule);
+
+        Universe universe = new Universe(grid, rules);
         String nextGenerationResult = universe.tick();
-        verify(secondRule, times(5)).isCellAliveByThisRule(anyLong());
+        Mockito.verify(secondRule, Mockito.times(5)).isCellAliveByThisRule(Matchers.anyLong());
 
 
         listOfCells = new ArrayList<Cell>(10);
@@ -94,17 +111,18 @@ public class GameOfLifeTest {
         listOfCells.add(cell4);
         grid = new Grid(listOfCells);
         secondRule = new MakeLiveCellDeadOnNeighboursOverCrowdedRule();
-        universe = new Universe(grid, secondRule);
+        rules = new ArrayList<>();
+        rules.add(secondRule);
+        universe = new Universe(grid, rules);
         nextGenerationResult = universe.tick();
         String finalNextGenerationResult = nextGenerationResult;
         Arrays.stream(expectedGenerationResult).forEach(eachResult -> {
-            System.out.printf(finalNextGenerationResult);
+
             Assert.assertTrue(finalNextGenerationResult.contains(eachResult)
             );
         });
 
     }
-
 
     @Test
     public void verifyIfThirdRuleIsAppliedOnGameOfLife() {
@@ -122,12 +140,15 @@ public class GameOfLifeTest {
         listOfCells.add(cell2);
         listOfCells.add(cell3);
         listOfCells.add(cell4);
-        MakeDeadCellAliveOnNeighbourCellsAreLiveRule thirdRule = mock(MakeDeadCellAliveOnNeighbourCellsAreLiveRule.class);
-        when(thirdRule.isCellAliveByThisRule(anyLong())).thenReturn(false);
+        MakeDeadCellAliveOnNeighbourCellsAreLiveRule thirdRule = Mockito.mock(MakeDeadCellAliveOnNeighbourCellsAreLiveRule.class);
+        Mockito.when(thirdRule.isCellAliveByThisRule(Matchers.anyLong())).thenReturn(false);
+        Mockito.when(thirdRule.isRuleForAliveCell()).thenReturn(false);
+        List<UniverseRule> rules = new ArrayList<>();
+        rules.add(thirdRule);
         Grid grid = new Grid(listOfCells);
-        Universe universe = new Universe(grid, thirdRule);
+        Universe universe = new Universe(grid, rules);
         String nextGenerationResult = universe.tick();
-        verify(thirdRule, times(16)).isCellAliveByThisRule(anyLong());
+        Mockito.verify(thirdRule, Mockito.times(16)).isCellAliveByThisRule(Matchers.anyLong());
         listOfCells = new ArrayList<>(10);
         listOfCells.add(cell);
         listOfCells.add(cell1);
@@ -136,16 +157,46 @@ public class GameOfLifeTest {
         listOfCells.add(cell4);
         grid = new Grid(listOfCells);
         thirdRule = new MakeDeadCellAliveOnNeighbourCellsAreLiveRule();
-        universe = new Universe(grid, thirdRule);
+        rules = new ArrayList<>();
+        rules.add(thirdRule);
+        universe = new Universe(grid, rules);
         nextGenerationResult = universe.tick();
         String finalNextGenerationResult = nextGenerationResult;
         Arrays.stream(expectedGenerationResult).forEach(eachResult -> {
-            System.out.printf(finalNextGenerationResult);
+
             Assert.assertTrue(finalNextGenerationResult.contains(eachResult)
             );
         });
 
     }
-    
+
+
+    @Test
+    public void verifyIfAllRulesAreAppliedOnGameOfLife() {
+        Cell cell = new Cell(1, 0);
+        Cell cell1 = new Cell(1, 1);
+        Cell cell2 = new Cell(1, 2);
+        String expectedGenerationResult[] = new String[]{"1,1", "0,1", "2,1"};
+        List<Cell> listOfCells = new ArrayList<Cell>(10);
+        listOfCells.add(cell);
+        listOfCells.add(cell1);
+        listOfCells.add(cell2);
+        List<UniverseRule> listOfRules = new ArrayList<>(10);
+        listOfRules.add(new MakeDeadCellAliveOnNeighbourCellsAreLiveRule());
+        listOfRules.add(new MakeLiveCellDeadOnNeighboursOverCrowdedRule());
+        listOfRules.add(new MakeLiveCellDeadOnNeighboursFewerRule());
+
+
+        Grid grid = new Grid(listOfCells);
+        Universe universe = new Universe(grid, listOfRules);
+        String nextGenerationResult = universe.tick();
+
+        String[] finalNextGenerationResult = nextGenerationResult.split("\\|");
+        Arrays.sort(finalNextGenerationResult);
+        Arrays.sort(expectedGenerationResult);
+        Assert.assertTrue(Arrays.equals(expectedGenerationResult, finalNextGenerationResult));
+
+    }
+
 
 }

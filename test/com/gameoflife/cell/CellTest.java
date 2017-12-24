@@ -1,4 +1,5 @@
-import com.gameoflife.cell.Cell;
+package com.gameoflife.cell;
+
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -24,8 +25,8 @@ public class CellTest {
         expectedNeighBourCells.add(new Cell(xCoordinate + 1, yCoordinate));
         expectedNeighBourCells.add(new Cell(xCoordinate - 1, yCoordinate));
 
-        List<Cell> neighbourCells = currCell.getNeighBourCells();
-        neighbourCells.forEach(eachNeighbourCell -> assertTrue(expectedNeighBourCells.contains(eachNeighbourCell)));
+        List<Cell> neighbourCells = currCell.getNeighbourCells();
+        neighbourCells.forEach(eachNeighbourCell -> TestCase.assertTrue(expectedNeighBourCells.contains(eachNeighbourCell)));
 
     }
 }

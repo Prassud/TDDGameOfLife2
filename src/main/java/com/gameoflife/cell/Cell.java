@@ -27,17 +27,17 @@ public class Cell {
         return Objects.hash(xCoordinate, yCoordinate);
     }
 
-    public List<Cell> getNeighBourCells() {
-        List<Cell> neighBourCellsToCurrentCells = new ArrayList<>(10);
-        neighBourCellsToCurrentCells.add(new Cell(xCoordinate - 1, yCoordinate - 1));
-        neighBourCellsToCurrentCells.add(new Cell(xCoordinate - 1, yCoordinate + 1));
-        neighBourCellsToCurrentCells.add(new Cell(xCoordinate, yCoordinate + 1));
-        neighBourCellsToCurrentCells.add(new Cell(xCoordinate, yCoordinate - 1));
-        neighBourCellsToCurrentCells.add(new Cell(xCoordinate + 1, yCoordinate + 1));
-        neighBourCellsToCurrentCells.add(new Cell(xCoordinate + 1, yCoordinate - 1));
-        neighBourCellsToCurrentCells.add(new Cell(xCoordinate + 1, yCoordinate));
-        neighBourCellsToCurrentCells.add(new Cell(xCoordinate - 1, yCoordinate));
-        return neighBourCellsToCurrentCells;
+    public List<Cell> getNeighbourCells() {
+        List<Cell> neighbourCellsToCurrentCells = new ArrayList<>(10);
+        neighbourCellsToCurrentCells.add(new Cell(xCoordinate - 1, yCoordinate - 1));
+        neighbourCellsToCurrentCells.add(new Cell(xCoordinate - 1, yCoordinate + 1));
+        neighbourCellsToCurrentCells.add(new Cell(xCoordinate, yCoordinate + 1));
+        neighbourCellsToCurrentCells.add(new Cell(xCoordinate, yCoordinate - 1));
+        neighbourCellsToCurrentCells.add(new Cell(xCoordinate + 1, yCoordinate + 1));
+        neighbourCellsToCurrentCells.add(new Cell(xCoordinate + 1, yCoordinate - 1));
+        neighbourCellsToCurrentCells.add(new Cell(xCoordinate + 1, yCoordinate));
+        neighbourCellsToCurrentCells.add(new Cell(xCoordinate - 1, yCoordinate));
+        return neighbourCellsToCurrentCells;
     }
 
     public int getxCoordinate() {

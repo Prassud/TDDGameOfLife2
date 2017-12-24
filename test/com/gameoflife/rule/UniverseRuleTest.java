@@ -1,3 +1,5 @@
+package com.gameoflife.rule;
+
 import com.gameoflife.rules.MakeDeadCellAliveOnNeighbourCellsAreLiveRule;
 import com.gameoflife.rules.MakeLiveCellDeadOnNeighboursFewerRule;
 import com.gameoflife.rules.MakeLiveCellDeadOnNeighboursOverCrowdedRule;
