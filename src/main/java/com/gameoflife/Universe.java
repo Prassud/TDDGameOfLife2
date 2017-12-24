@@ -4,7 +4,7 @@ import com.gameoflife.cell.Cell;
 import com.gameoflife.grid.Grid;
 import com.gameoflife.rules.UniverseRule;
 
-import java.util.List;
+import java.util.Set;
 
 public class Universe {
     private Grid grid;
@@ -18,7 +18,13 @@ public class Universe {
 
     public String tick() {
 
-        List<Cell> aliveCellsAfterTheRuleIsApplied = this.grid.getAliveCellsAfterTheRuleIsApplied(universeRule);
-        return aliveCellsAfterTheRuleIsApplied.stream().map(eachCell -> eachCell.getxCoordinate() + "," + eachCell.getyCoordinate()).reduce("", String::concat);
+        Set<Cell> aliveCellsAfterTheRuleIsApplied = this.grid.getAliveCellsAfterTheRuleIsApplied(universeRule);
+        return aliveCellsAfterTheRuleIsApplied.stream().map(
+                eachCell ->
+                {
+                    String appendedResult = eachCell.getxCoordinate() + "," + eachCell.getyCoordinate() + System.lineSeparator();
+                    return  appendedResult;
+                }).
+                reduce("", String::concat);
     }
 }
