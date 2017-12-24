@@ -4,7 +4,7 @@
 
 #directories
 .idea/
-
+.idea
 # Log file
 *.log
 
