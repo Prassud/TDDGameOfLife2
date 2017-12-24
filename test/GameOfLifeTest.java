@@ -26,7 +26,9 @@ public class GameOfLifeTest {
         listOfCell.add(cell3);
         listOfCell.add(cell4);
         Grid gameOfLifeGrid = new Grid(listOfCell);
-        List<Cell> currentGenerationAliveCells = gameOfLifeGrid.getAliveCellsAfterTheRuleIsApplied();
+        MakeLiveCelDeadRule firstRule = mock(MakeLiveCelDeadRule.class);
+        when(firstRule.isCellAliveByThisRule(anyLong())).thenReturn(true);
+        List<Cell> currentGenerationAliveCells = gameOfLifeGrid.getAliveCellsAfterTheRuleIsApplied(firstRule);
         currentGenerationAliveCells.forEach(eachCell -> Assert.assertTrue(listOfCell.contains(eachCell)));
 
     }
@@ -67,7 +69,17 @@ public class GameOfLifeTest {
         Universe universe = new Universe(grid, firstRule);
         String nextGenerationResult = universe.tick();
         verify(firstRule, times(3)).isCellAliveByThisRule(anyLong());
-        Assert.assertEquals(expectedGenerationResult,nextGenerationResult);
+
+
+        listOfCells = new ArrayList<Cell>(10);
+        listOfCells.add(cell);
+        listOfCells.add(cell1);
+        listOfCells.add(cell2);
+        grid = new Grid(listOfCells);
+        firstRule = new MakeLiveCelDeadRule();
+        universe = new Universe(grid, firstRule);
+        nextGenerationResult = universe.tick();
+        Assert.assertEquals(expectedGenerationResult, nextGenerationResult);
     }
 
 }
